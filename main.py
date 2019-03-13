@@ -2,49 +2,28 @@ import pygame
 import math
 
 pygame.init()
-screen = pygame.display.set_mode((400, 300))
+
+SCREEN_WIDTH = 240
+SCREEN_HEIGHT = 160
+
+display = pygame.display.set_mode((SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2))
+gameScreen = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 done = False
 
-HP_SCROLL_FAST = 0
-HP_SCROLL_SLOW = 1
-
-class HPDisplay(): # Class to display a 3-digit HP value and add scrolling through values
-        def __init__(self, value, pos):
-                self.currentHP = value
-                self.digitHundreds = (math.floor(value / 100.0), 0)
-                self.digitTens = (math.floor((value % 100) / 10.0), 0)
-                self.digitOnes = (value % 10, 0)
-                self.targetHP = value
-                self.speed = HP_SCROLL_FAST
-                self.x = pos[0]
-                self.y = pos[1]
-
-        def begin_approach(self, target, speed):
-                self.targetHP = target
-                self.speed = speed
-
-        def getimg(self, digitInfo):
-                imageNum = digitInfo[0] * 8 + digitInfo[1]
-                return pygame.image.load("numbers/num%d.png" % imageNum)
-        
-        def display(self, gameScreen):
-                gameScreen.blit(self.getimg(self.digitHundreds), (self.x, self.y))
-                gameScreen.blit(self.getimg(self.digitTens), (self.x + 8, self.y))
-                gameScreen.blit(self.getimg(self.digitOnes), (self.x + 16, self.y))
-                
-        def update(self, gameScreen):
-                pass
+from numberdisplay import *
                 
                 
-hp = HPDisplay(234, (10,10))
+hp = NumDisplay(90, (10,10))
+hp.begin_approach(120, NUM_SCROLL_SLOW)
 while not done:
-        screen.fill((0, 0, 0)) # clear screen
+        gameScreen.fill((0, 0, 0)) # clear screen
         for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                         done = True
 
-        hp.display(screen)
+        hp.update(gameScreen)
         
-        clock.tick(60) # limit to 60 fps
+        clock.tick(30) # limit to 60 fps
+        display.blit(gameScreen, (0,0))
         pygame.display.flip() # update display buffer
