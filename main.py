@@ -6,7 +6,10 @@ pygame.init()
 SCREEN_WIDTH = 240
 SCREEN_HEIGHT = 160
 
-display = pygame.display.set_mode((SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2))
+SCALED_SCREEN_WIDTH = SCREEN_WIDTH * 3
+SCALED_SCREEN_HEIGHT = SCREEN_HEIGHT * 3
+
+display = pygame.display.set_mode((SCALED_SCREEN_WIDTH, SCALED_SCREEN_HEIGHT))
 gameScreen = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 done = False
@@ -14,8 +17,8 @@ done = False
 from numberdisplay import *
                 
                 
-hp = NumDisplay(90, (10,10))
-hp.begin_approach(120, NUM_SCROLL_SLOW)
+hp = NumDisplay(120, (10,10))
+hp.begin_approach(240, NUM_SCROLL_FAST)
 while not done:
         gameScreen.fill((0, 0, 0)) # clear screen
         for event in pygame.event.get():
@@ -25,5 +28,5 @@ while not done:
         hp.update(gameScreen)
         
         clock.tick(30) # limit to 60 fps
-        display.blit(gameScreen, (0,0))
+        display.blit(pygame.transform.scale(gameScreen, (SCALED_SCREEN_WIDTH, SCALED_SCREEN_HEIGHT)), (0,0))
         pygame.display.flip() # update display buffer
