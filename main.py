@@ -17,15 +17,16 @@ done = False
 from numberdisplay import *
                 
                 
-hp = NumDisplay(120, (10,10))
-hp.begin_approach(240, NUM_SCROLL_FAST)
+stats = StatsDisplay(140, 103, (10,10))
+stats.hurtHP(50)
+stats.hurtPP(80)
 while not done:
         gameScreen.fill((0, 0, 0)) # clear screen
         for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                         done = True
 
-        hp.update(gameScreen)
+        stats.update(gameScreen)
         
         clock.tick(30) # limit to 60 fps
         display.blit(pygame.transform.scale(gameScreen, (SCALED_SCREEN_WIDTH, SCALED_SCREEN_HEIGHT)), (0,0))

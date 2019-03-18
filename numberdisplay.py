@@ -15,7 +15,39 @@ scrollingNumberImages = []
 for i in range(80):
         scrollingNumberImages.append(pygame.image.load("numbers/num%d.png" % i))
 
-class NumDisplay(): # Class to display a 3-digit HP value and add scrolling through values
+statsBoxImage = pygame.image.load("menus/statsbox.png")
+
+class StatsDisplay():
+        def __init__(self, maxHP, maxPP, pos):
+                self.hp = NumDisplay(maxHP, (29,13))
+                self.pp = NumDisplay(maxPP, (29,23))
+                self.dead = False
+                self.maxHP = maxHP
+                self.maxPP = maxPP
+                self.pos = pos
+        
+        def healHP(self, amount):
+                self.hp.begin_approach(min(self.maxHP, self.hp.targetVal + amount), SCROLL_SPEED_FAST)
+        
+        def healPP(self, amount):
+                self.pp.begin_approach(min(self.maxPP, self.pp.targetVal + amount), SCROLL_SPEED_FAST)
+        
+        def hurtHP(self, amount):
+                self.hp.begin_approach(max(0, self.hp.targetVal - amount))
+        
+        def hurtPP(self, amount):
+                self.pp.begin_approach(max(0, self.pp.targetVal - amount))
+                
+        def update(self, gameScreen):
+                if self.hp.currentVal == 0:
+                        self.dead = True
+                img = statsBoxImage.copy()
+                self.hp.update(img)
+                self.pp.update(img)
+                gameScreen.blit(img, self.pos)
+                
+
+class NumDisplay(): # Class to display a 3-digit number and add scrolling through values
         def __init__(self, value, pos):
                 self.currentVal = value
                 # The current values of each digit
@@ -25,8 +57,7 @@ class NumDisplay(): # Class to display a 3-digit HP value and add scrolling thro
                 self.digitOnes = [value % 10, 0, NUM_NOT_SCROLLING]
                 self.targetVal = value
                 self.speed = NUM_SCROLL_FAST
-                self.x = pos[0]
-                self.y = pos[1]
+                self.pos = pos
                 self.timer = 0
 
         def begin_approach(self, target, speed=None):
@@ -127,11 +158,11 @@ class NumDisplay(): # Class to display a 3-digit HP value and add scrolling thro
         
         def display(self, gameScreen):
                 if self.digitHundreds[0] != 0:
-                        gameScreen.blit(self.getimg(self.digitHundreds), (self.x, self.y))
-                        gameScreen.blit(self.getimg(self.digitTens), (self.x + 8, self.y))
+                        gameScreen.blit(self.getimg(self.digitHundreds), self.pos)
+                        gameScreen.blit(self.getimg(self.digitTens), (self.pos[0] + 8, self.pos[1]))
                 elif self.digitTens[0] != 0:
-                        gameScreen.blit(self.getimg(self.digitTens), (self.x + 8, self.y))
-                gameScreen.blit(self.getimg(self.digitOnes), (self.x + 16, self.y))
+                        gameScreen.blit(self.getimg(self.digitTens), (self.pos[0] + 8, self.pos[1]))
+                gameScreen.blit(self.getimg(self.digitOnes), (self.pos[0] + 16, self.pos[1]))
                 
         def update(self, gameScreen):
                 self.timer += 1
